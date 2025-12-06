@@ -1,0 +1,34 @@
+{
+  "name": "@mazarelo/eslint-config-react",
+  "version": "1.0.0",
+  "description": "Shared ESLint configuration for React + TypeScript projects",
+  "type": "module",
+  "main": "eslint.config.js",
+  "exports": {
+    ".": "./eslint.config.js"
+  },
+  "files": [
+    "eslint.config.js"
+  ],
+  "keywords": [
+    "eslint",
+    "eslintconfig",
+    "react",
+    "typescript"
+  ],
+  "author": "mazarelo",
+  "license": "MIT",
+  "peerDependencies": {
+    "eslint": "^9.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-unicorn": "^62.0.0",
+    "globals": "^16.5.0",
+    "typescript-eslint": "^8.48.1"
+  }
+}
