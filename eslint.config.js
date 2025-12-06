@@ -6,6 +6,7 @@ import reactHooksPlugin from "eslint-plugin-react-hooks";
 import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
 import importPlugin from "eslint-plugin-import";
 import unicornPlugin from "eslint-plugin-unicorn";
+import pathsPlugin from "eslint-plugin-paths";
 import globals from "globals";
 
 /**
@@ -65,6 +66,7 @@ export function createConfig(options = {}) {
         "jsx-a11y": jsxA11yPlugin,
         import: importPlugin,
         unicorn: unicornPlugin,
+        paths: pathsPlugin,
       },
       settings: {
         react: { version: "detect" },
@@ -150,6 +152,11 @@ export function createConfig(options = {}) {
         "import/no-cycle": "warn",
         "import/no-self-import": "error",
         "import/no-useless-path-segments": "error",
+
+        // ──────────────────────────────────────────────────────────────────────
+        // Path aliases - enforce usage of tsconfig paths
+        // ──────────────────────────────────────────────────────────────────────
+        "paths/alias": "error",
 
         // ──────────────────────────────────────────────────────────────────────
         // Unicorn - Modern JS practices
