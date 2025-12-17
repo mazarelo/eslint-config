@@ -17,10 +17,7 @@ import globals from "globals";
  * @returns {import('typescript-eslint').ConfigWithExtends[]} ESLint flat config array
  */
 export function createConfig(options = {}) {
-  const {
-    tsconfigPath = "./tsconfig.json",
-    ignores = [],
-  } = options;
+  const { tsconfigPath = "./tsconfig.json", ignores = [] } = options;
 
   const project = path.resolve(process.cwd(), tsconfigPath);
 
@@ -87,7 +84,10 @@ export function createConfig(options = {}) {
             caughtErrorsIgnorePattern: "^_",
           },
         ],
-        "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
+        "@typescript-eslint/consistent-type-definitions": [
+          "error",
+          "interface",
+        ],
         "@typescript-eslint/consistent-type-imports": [
           "error",
           {
@@ -221,7 +221,16 @@ export function createConfig(options = {}) {
             selector: "variable",
             types: ["boolean"],
             format: ["PascalCase"],
-            prefix: ["is", "has", "should", "can", "did", "will", "show", "hide"],
+            prefix: [
+              "is",
+              "has",
+              "should",
+              "can",
+              "did",
+              "will",
+              "show",
+              "hide",
+            ],
           },
           {
             selector: "function",
@@ -270,7 +279,10 @@ export function createConfig(options = {}) {
         "react/no-direct-mutation-state": "error",
         "react/no-array-index-key": "warn",
         "react/no-danger": "error",
-        "react/no-unstable-nested-components": ["error", { allowAsProps: true }],
+        "react/no-unstable-nested-components": [
+          "error",
+          { allowAsProps: true },
+        ],
         "react/hook-use-state": "warn",
         "react/jsx-no-leaked-render": [
           "error",
@@ -319,7 +331,10 @@ export function createConfig(options = {}) {
         "react/jsx-first-prop-new-line": ["error", "multiline"],
         "react/jsx-closing-bracket-location": ["error", "line-aligned"],
         "react/jsx-closing-tag-location": "error",
-        "react/jsx-one-expression-per-line": ["error", { allow: "single-child" }],
+        "react/jsx-one-expression-per-line": [
+          "error",
+          { allow: "single-child" },
+        ],
         "react/jsx-indent-props": ["error", 2],
 
         // Accessibility
@@ -382,7 +397,7 @@ export function createConfig(options = {}) {
         "import/no-default-export": "off",
         "@typescript-eslint/no-require-imports": "off",
       },
-    }
+    },
   );
 }
 
