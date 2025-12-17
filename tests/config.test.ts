@@ -24,7 +24,10 @@
  *
  * To add a new test:
  *   1. Create a file in the appropriate category/valid or category/invalid folder
- *   2. For invalid fixtures, add `// @errors: rule-id-1, rule-id-2` as the first line
+ *   2. For invalid fixtures, add annotations at the top of the file:
+ *      - `// @errors: rule-id-1, rule-id-2` for rules configured as "error"
+ *      - `// @warnings: rule-id-1, rule-id-2` for rules configured as "warn"
+ *      - Both can be used together on separate lines
  *   3. Run tests - they will be automatically discovered
  */
 import assert from "node:assert";
@@ -57,18 +60,40 @@ before(() => {
   });
 });
 
+interface ExpectedViolations {
+  errors: string[];
+  warnings: string[];
+}
+
 /**
- * Parse expected errors from a fixture file's first comment line
+ * Parse expected errors and warnings from a fixture file's first comment lines
  * Format: // @errors: rule-id-1, rule-id-2
+ *         // @warnings: rule-id-3, rule-id-4
  */
-function parseExpectedErrors(filePath: string): string[] {
+function parseExpectedViolations(filePath: string): ExpectedViolations {
   const content = fs.readFileSync(filePath, "utf-8");
-  const firstLine = content.split("\n")[0];
-  const match = /\/\/\s*@errors:\s*(.+)/.exec(firstLine);
-  if (!match) {
-    return [];
+  const lines = content.split("\n");
+
+  const result: ExpectedViolations = { errors: [], warnings: [] };
+
+  for (const line of lines) {
+    const errorMatch = /\/\/\s*@errors:\s*(.+)/.exec(line);
+    if (errorMatch) {
+      result.errors = errorMatch[1].split(",").map((s) => s.trim());
+    }
+
+    const warningMatch = /\/\/\s*@warnings:\s*(.+)/.exec(line);
+    if (warningMatch) {
+      result.warnings = warningMatch[1].split(",").map((s) => s.trim());
+    }
+
+    // Stop parsing after we've passed the comment block
+    if (!line.startsWith("//") && line.trim() !== "") {
+      break;
+    }
   }
-  return match[1].split(",").map((s) => s.trim());
+
+  return result;
 }
 
 /**
@@ -136,7 +161,7 @@ for (const category of CATEGORIES) {
       }
     });
 
-    // Invalid fixtures - should trigger expected errors
+    // Invalid fixtures - should trigger expected errors/warnings
     describe("Invalid", () => {
       const invalidDir = path.join(categoryDir, "invalid");
       const invalidFiles = getFilesInDir(invalidDir);
@@ -145,22 +170,30 @@ for (const category of CATEGORIES) {
         it.skip("no invalid fixtures", () => {});
       } else {
         for (const file of invalidFiles) {
-          it(`${file} should trigger expected errors`, async () => {
+          it(`${file} should trigger expected violations`, async () => {
             const filePath = path.join(invalidDir, file);
-            const expectedErrors = parseExpectedErrors(filePath);
+            const expected = parseExpectedViolations(filePath);
 
             assert.ok(
-              expectedErrors.length > 0,
-              `Invalid fixture "${file}" must have @errors comment`,
+              expected.errors.length > 0 || expected.warnings.length > 0,
+              `Invalid fixture "${file}" must have @errors or @warnings comment`,
             );
 
-            const { errors } = await lintFixture(filePath);
+            const { errors, warnings } = await lintFixture(filePath);
             const errorRuleIds = errors.map((e) => e.ruleId);
+            const warningRuleIds = warnings.map((w) => w.ruleId);
 
-            for (const expected of expectedErrors) {
+            for (const expectedError of expected.errors) {
               assert.ok(
-                errorRuleIds.includes(expected),
-                `Expected error "${expected}" in "${file}", but got: [${errorRuleIds.join(", ")}]`,
+                errorRuleIds.includes(expectedError),
+                `Expected error "${expectedError}" in "${file}", but got: [${errorRuleIds.join(", ")}]`,
+              );
+            }
+
+            for (const expectedWarning of expected.warnings) {
+              assert.ok(
+                warningRuleIds.includes(expectedWarning),
+                `Expected warning "${expectedWarning}" in "${file}", but got: [${warningRuleIds.join(", ")}]`,
               );
             }
           });

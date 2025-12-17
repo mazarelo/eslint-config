@@ -238,6 +238,7 @@ export function createConfig(options = {}) {
             eventHandlerPrefix: "handle",
             eventHandlerPropPrefix: "on",
             checkLocalVariables: true,
+            checkInlineFunction: true,
           },
         ],
         "react/jsx-pascal-case": "error",
