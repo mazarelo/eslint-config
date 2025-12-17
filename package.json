@@ -1,6 +1,6 @@
 {
   "name": "@mazarelo/eslint-config-react",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Shared ESLint configuration for React + TypeScript projects",
   "type": "module",
   "main": "eslint.config.js",
